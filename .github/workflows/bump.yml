@@ -1,0 +1,58 @@
+name: Bump manifest
+
+# Windows analogue of the Homebrew tap's bottle.yml. Triggered by the main repo's
+# release workflow (repository_dispatch `release`) or manually. Points
+# bucket/funput.json at the new release zip + its sha256 and commits it. No build
+# matrix or merge step — Scoop installs the prebuilt release binary directly, so
+# this is just a version/url/hash bump.
+on:
+  repository_dispatch:
+    types: [release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version to point at, e.g. 1.2026.43"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-${{ github.event.client_payload.version || inputs.version }}
+  cancel-in-progress: false
+
+env:
+  VERSION: ${{ github.event.client_payload.version || inputs.version }}
+  MANIFEST: bucket/funput.json
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Point funput.json at v${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          url="https://github.com/Funput/Funput/releases/download/v${VERSION}/funput-term-${VERSION}-x86_64-pc-windows-msvc.zip"
+          # Hash the exact asset Scoop will download (fail loudly if the release
+          # asset isn't there yet).
+          sha=$(curl -fsSL "$url" | shasum -a 256 | cut -d' ' -f1)
+          f="$MANIFEST"
+          # 1) version string. 2) the CONCRETE architecture url (starts with a
+          # digit after `v`, so it never touches the autoupdate `v$version` template).
+          # 3) the 64-hex sha256.
+          perl -0pi -e "s|\"version\": \"[^\"]*\"|\"version\": \"$VERSION\"|" "$f"
+          perl -0pi -e "s|https://github.com/Funput/Funput/releases/download/v[0-9][^\"]*\.zip|$url|" "$f"
+          perl -0pi -e "s|\"hash\": \"[0-9a-f]{64}\"|\"hash\": \"$sha\"|" "$f"
+          echo "Bumped $f to v${VERSION} (sha256 $sha)"
+          cat "$f"
+
+      - name: Commit the version bump
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "funput ${VERSION}: bump manifest to release" || echo "no changes"
+          git push

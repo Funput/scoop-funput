@@ -1,0 +1,28 @@
+{
+    "version": "1.2026.43",
+    "description": "Vietnamese input for the terminal (Telex/VNI) via a transparent PTY wrapper. The `funput` umbrella CLI hosts `funput term`.",
+    "homepage": "https://funput.app",
+    "license": "MIT",
+    "notes": [
+        "Type Vietnamese in terminal apps:  funput term -- <program>",
+        "Toggle Vietnamese with Ctrl-\\ . No IME, no system permissions.",
+        "Windows ConPTY support is still landing (phase TT6); interactive composition may be rough until then."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Funput/Funput/releases/download/v1.2026.43/funput-term-1.2026.43-x86_64-pc-windows-msvc.zip",
+            "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+    },
+    "bin": "funput.exe",
+    "checkver": {
+        "github": "https://github.com/Funput/Funput"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Funput/Funput/releases/download/v$version/funput-term-$version-x86_64-pc-windows-msvc.zip"
+            }
+        }
+    }
+}
