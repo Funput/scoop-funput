@@ -1,5 +1,5 @@
 {
-    "version": "1.2026.44",
+    "version": "1.2026.45",
     "description": "Vietnamese input for the terminal (Telex/VNI) via a transparent PTY wrapper. The `funput` umbrella CLI hosts `funput term`.",
     "homepage": "https://funput.app",
     "license": "MIT",
@@ -10,8 +10,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Funput/Funput/releases/download/v1.2026.44/funput-term-1.2026.44-x86_64-pc-windows-msvc.zip",
-            "hash": "34ec8c43844905083675c25a02826495cd5f7e97a36c5fa3db419c7cb2163c66"
+            "url": "https://github.com/Funput/Funput/releases/download/v1.2026.45/funput-term-1.2026.45-x86_64-pc-windows-msvc.zip",
+            "hash": "8fd1f19c07614767c0e29c21dbb5c84a30d41d60030ebf12a67eedca8aede6fb"
         }
     },
     "bin": "funput.exe",
